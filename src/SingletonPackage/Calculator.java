@@ -9,9 +9,9 @@ private static Calculator obj ; //here we used static coz,if there is no static 
 
 // here we used private constructor because ,it helps to prevent creating object in main as new object which violets the singleton rule.
 //A private constructor ensures that nobody outside the class can create a new object using new
-// if we not use constru
+// if we not use constructor ,default public constructor will use,and using public makes to create new object which violites the singleton pattern,
 private Calculator() {                    // why static not needs pre existing objects because ,for static the object is referenced to class level and for non static that object is referenced to that particular object level
-	                                       // why class level no need pre- existing object,coz class is already in memory so no need create any obj.
+	  System.out.println("Instance created");                                    // why class level no need pre- existing object,coz class is already in memory so no need create any obj.
 	                                       // non static is object level,needs object to creating another object,so we use static .
 }
 public int sum() {
@@ -19,13 +19,21 @@ public int sum() {
 }
 
 
- public static Calculator getInstance() {
+ /*public static Calculator getInstance() {   
 	                                           //here used static ,coz if it non static then this method can run only after creating object,so even before calling object to run the method we need static
 	  if(obj==null) {
 		  obj = new Calculator();
 	  }
 	 
-	 return  obj;
+	 return  obj;*/
+	 
+	 
+	 public synchronized static Calculator getInstance() {      // actually when we use multi threading ,due parellelism ,two objects will create,as two threads will perform task,rather than waiting,to avoid this we use synchonized ,it helps in waiting other threads while one thread is busy.
+if(obj==null) {
+obj = new Calculator();
+}
+
+return  obj;
 }
 }
 
