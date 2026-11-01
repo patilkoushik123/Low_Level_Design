@@ -28,10 +28,23 @@ public int sum() {
 	 return  obj;*/
 	 
 	 
-	 public synchronized static Calculator getInstance() {      // actually when we use multi threading ,due parellelism ,two objects will create,as two threads will perform task,rather than waiting,to avoid this we use synchonized ,it helps in waiting other threads while one thread is busy.
+	/* public synchronized static Calculator getInstance() {      // actually when we use multi threading ,due to parellelism ,two objects will create,as two threads will perform task,rather than waiting,to avoid this we use synchonized ,it helps in waiting other threads while one thread is busy.
 if(obj==null) {
 obj = new Calculator();
 }
+
+return  obj;
+}*/
+	 
+	 public static Calculator getInstance() {      // so here we removed synchronized in method level because when there are mutiple threads and after creating in obj after first thread still remaining threads will be in synchroination ,coming one after other ,if there are multiple threads it leads to effect on the performance.
+       if(obj==null) {                            // Thats why we used synchonization in block level where multipe threads come at condtion level and checks the conidtion if the obj is created already then bypass the creating objecr and return same object,also we used condition check if object is null or not because if object is already created no need to even keep the synchronized.
+        synchronized(Calculator.class) {
+        	if(obj==null) {                      // This concept is called Double check locking.
+        		obj = new Calculator();
+        	}
+        }
+       }
+
 
 return  obj;
 }
