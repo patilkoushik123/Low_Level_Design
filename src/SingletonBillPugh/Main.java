@@ -22,6 +22,21 @@ public class Main {
         t1.start();
         t2.start();
         t3.start();
+        
+        /*
+         * 1. Application started. Notice the constructor has NOT run yet.
+
+2. Spawning multiple concurrent threads to test thread safety...
+
+--> [JVM] TenantRegistry constructor executed! (Object created NOW)
+Thread-A got instance -> HashCode: 1765771427
+Thread-B got instance -> HashCode: 1765771427
+Thread-C got instance -> HashCode: 1765771427
+
+here this is the output because only one time object is called (constructor prints one time so) and remaining threads utilize the same object(hashcode is same it means the object is same) 
+NOTE: while creating object ,calling of constructor is mandatory,if we mention it will call that constructor or else it will internally default constructor.
+Daily life example: suppose lets take an building as an object,If we want to occupy that building ,fst that building should be built by constructor,same in java while creating an object or while we need to use that object ,fst it get called by constructor.
+         */
     }
 }
 
