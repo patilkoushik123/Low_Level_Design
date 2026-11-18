@@ -14,6 +14,6 @@ public class TenantRegistry {
 
     // 3. Global access point
     public static TenantRegistry getInstance() {
-        return SingletonHolder.INSTANCE;
+        return SingletonHolder.INSTANCE;                      // if we use this bill pugh in our project we have to call getInstance() method in another class,also no need to create new again as vilotes the singleton rule anyhow private constructor will take care of not creating the object,
     }
-}
+}                                                           
