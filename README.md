@@ -316,6 +316,105 @@ this.repository = anotherRepository; // Compilation error
 
 **Remember:** We use `final` in constructor injection to ensure that once a dependency is injected, its reference remains unchanged throughout the object's lifetime.
 
+WHEN OBJECT,INSTANCE CREATION HAPPENS IN SPRING:
+
+At the time of @service , @Component ,@Repositor spring creates an object,instance so while at the time injecting into different class should create constructor and inject that object 
+
+example:
+@Component
+public class TenantRegistry { ... }              // Spring creates this once
+
+@Service
+public class BillingService {
+    private final TenantRegistry tenantRegistry; // final: assigned once
+
+    public BillingService(TenantRegistry tenantRegistry) {   // Spring injects it here
+        this.tenantRegistry = tenantRegistry;
+    }
+}   
+
+
+About @primary and @Qualifer:
+
+We use @Qualifier and @Primary in Spring Boot when multiple beans of the same type are available, and Spring needs to know which one to inject.
+
+1. The problem: Multiple implementations
+Suppose we have an interface:
+public interface UserRepository {
+    String getData();
+}
+
+
+Two implementations:
+@Repository
+public class RealRepository implements UserRepository {
+    public String getData() {
+        return "Real Repository Data";
+    }
+}
+
+
+@Repository
+public class DummyRepository implements UserRepository {
+    public String getData() {
+        return "Dummy Repository Data";
+    }
+}
+
+
+Now, inject the interface into a service:
+@Service
+public class UserService {
+
+    private final UserRepository repository;
+
+    public UserService(UserRepository repository) {
+        this.repository = repository;
+    }
+}
+
+What is the problem?
+
+Spring finds two beans of type UserRepository:
+- RealRepository
+- DummyRepository
+Which one should Spring inject?
+
+Spring gets confused because there are two candidates. It throws NoUniqueBeanDefinitionException
+
+Solution: 
+1.Use @Primary when you want one implementation to be the default choice.
+@Repository
+@Primary
+public class RealRepository implements UserRepository {
+
+    public String getData() {
+        return "Real Repository Data";
+    }
+}
+
+Now Spring understands:
+- RealRepository → Default choice
+- DummyRepository → Secondary choice
+
+2. qualifier
+    @Service
+public class UserService {
+
+    private final UserRepository repository;
+
+    public UserService(
+        @Qualifier("dummyRepository") UserRepository repository) {
+
+        this.repository = repository;
+    }
+}
+
+Now Spring injects DummyRepository, even if RealRepository is marked @Primary.
+
+
+
+
 
 
 
