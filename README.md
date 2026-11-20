@@ -251,6 +251,71 @@ Spring bean:
 - Need injected dependencies (repository, other beans): use a **Spring bean**, never an enum.
 - `final` works in enums for values known at class-loading time, not for Spring-created objects.
 
+  CORE EXPLANATION OF WHY USE FINAL:
+
+  ## 1. `final` in Constructor Injection (Spring Boot)
+
+**Purpose:** To prevent reassignment of an injected dependency after the object is constructed.
+
+### Example: RealRepository and DummyRepository
+
+Suppose we have two repository implementations:
+
+- RealRepository – Contains actual application data.
+- DummyRepository – Contains dummy/test data.
+
+We inject RealRepository into our service through the constructor.
+
+```java
+@Service
+public class UserService {
+
+    private final UserRepository repository;
+
+    public UserService(UserRepository repository) {
+        this.repository = repository;
+    }
+}
+```
+
+### What happens without `final`?
+
+```java
+private UserRepository repository;
+```
+
+- Initially, Spring injects RealRepository.
+- Later, we can reassign the reference to another compatible repository object.
+- The service could then start using a different repository and retrieve different data.
+
+```java
+this.repository = anotherRepository; // Allowed
+```
+
+### What happens with `final`?
+
+```java
+private final UserRepository repository;
+```
+
+- Spring injects the repository through the constructor.
+- Once initialized, the reference cannot be reassigned.
+- It continues pointing to the originally injected repository.
+- Any attempt to reassign it causes a compilation error.
+
+```java
+this.repository = anotherRepository; // Compilation error
+```
+
+### Important Points
+
+1. `final` ensures that the injected dependency reference cannot be changed after constructor initialization.
+2. It helps maintain dependency consistency.
+3. It makes the reference immutable, not the repository's internal data.
+4. `final` does not decide which repository Spring injects; it only prevents reassignment.
+
+**Remember:** We use `final` in constructor injection to ensure that once a dependency is injected, its reference remains unchanged throughout the object's lifetime.
+
 
 
 
